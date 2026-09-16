@@ -26,8 +26,11 @@ export VAST_LABEL_PREFIX=<you>-claude-   # default: "$USER-claude-". Shared acco
 ./remote.py run 'tail -n 20 train.log'
 ./remote.py put local.py workspace/proj/local.py
 ./remote.py get workspace/proj/results.json results.json
-./vastctl.py down <id>
+./vastctl.py down <id>     # only when you're done with the box for good; it keeps state otherwise
 ```
+
+Boxes are cheap to keep and slow to rebuild (~5 min plus your setup), so the default is
+to leave one running across sessions and reconnect with `vastctl.py info <id>`.
 
 `vastctl.py wait` writes `~/.vast-remote/<id>.json` and `~/.vast-remote/current`;
 `remote.py` reads those, so `--id` is only needed with several instances up.
