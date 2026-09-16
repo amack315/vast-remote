@@ -8,13 +8,14 @@ Jupyter's terminal API through that tunnel.
 
 Usage:
   vastctl.py offers [--max-dph 0.5] [--gpu "RTX 4090"] [--min-gpu-ram 20] [--n 10]
-  vastctl.py up --label amack-claude-<purpose> [--offer ID | --gpu ... --max-dph ...] [--disk 32]
+  vastctl.py up --label <purpose>          # label becomes <prefix><purpose> [--offer ID | --gpu ... --max-dph ...] [--disk 32]
   vastctl.py wait <id>            # block until running + tunnels discovered; prints JSON conn info
   vastctl.py info <id>            # conn info JSON (tunnels, token) once available
   vastctl.py list                 # all instances on the account (label, status)
   vastctl.py logs <id> [--tail N]
   vastctl.py down <id>
-Env: VAST_API_KEY (required), VAST_LABEL_PREFIX (default "amack-claude-").
+Env: VAST_API_KEY (required), VAST_LABEL_PREFIX (default "<user>-claude-", where <user> is
+     $VAST_USER, else $USER, else the OS username). The account is shared: every instance gets a prefix.
 """
 import argparse, json, os, re, sys, time, urllib.parse, urllib.request
 
@@ -22,7 +23,9 @@ API = "https://console.vast.ai/api/v0"
 TEMPLATE = "b84ca276fa572e949cd7ff43ae5fe855"  # "PyTorch (Vast)" official template, vastai/pytorch
 RUNTYPE = "jupyter_direc ssh_direc ssh_proxy"   # MUST be jupyter runtype: ssh runtype skips Jupyter
 KEY = os.environ.get("VAST_API_KEY")
-PREFIX = os.environ.get("VAST_LABEL_PREFIX", "amack-claude-")
+import getpass
+_USER = os.environ.get("VAST_USER") or os.environ.get("USER") or getpass.getuser()
+PREFIX = os.environ.get("VAST_LABEL_PREFIX", f"{_USER}-claude-")
 STATE_DIR = os.path.expanduser("~/.vast-remote")
 
 

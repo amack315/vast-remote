@@ -16,7 +16,7 @@ Two scripts, stdlib only except `websocket-client`:
 ```bash
 pip install -r requirements.txt
 export VAST_API_KEY=...            # from https://cloud.vast.ai/manage-keys/
-export VAST_LABEL_PREFIX=amack-claude-   # optional; default shown. Shared account: always label.
+export VAST_LABEL_PREFIX=<you>-claude-   # default: "$USER-claude-". Shared account: every instance gets labeled.
 
 ./vastctl.py offers --gpu "RTX 4090" --max-dph 0.6          # browse
 ./vastctl.py up --label scan-run --gpu "RTX 4090" --disk 64 --wait   # ~3-5 min, prints conn info JSON
@@ -68,7 +68,8 @@ Alternatively set `VAST_JUPYTER_URL` and `VAST_TOKEN`.
 - Interactive TTY programs (`vim`, `top`) won't work through `run`. Plain
   commands, `tail -f` with `--timeout`, and streaming output are fine.
 - Tunnels come up 30–90 s after the instance reports `running`; `wait` handles that.
-- `vastctl.py down` refuses to destroy instances whose label lacks the prefix
-  (shared account safety). `--force` overrides.
+- `vastctl.py down` refuses to destroy instances whose label lacks *your* prefix
+  (shared account safety: you only tear down your own boxes). `--force` overrides.
+- In containers `$USER` is often `root`; set `VAST_USER=<you>` or `VAST_LABEL_PREFIX` explicitly.
 - Offer filters default to verified hosts, ≥10 direct ports, amd64, CUDA ≥ 12.4,
   ≥300 Mb/s down. Loosen with flags if you get no matches.
